@@ -8,7 +8,7 @@
 
 **PRISM** is a plug-in remasking framework that fine-tunes any pretrained Masked Diffusion Model (MDM) to predict *per-token quality* in a single forward pass, enabling **self-correction** at inference.
 It adds a lightweight objective without changing the base MDM architecture.
-- **Theory-backed head:** estimates per-token quality \\(q_i \approx \Pr[x_i = y_i \mid y \oplus m_i]\\).  
+- **Theory-backed head:** estimates per-token quality $q_i \approx \Pr[x_i = y_i \mid y \oplus m_i]$.  
 - **Practical:** simple to fine-tune; Improves over remasking baselines on Sudoku, unconditional text (170M), and code (LLaDA-8B on MBPP) with modest fine-tuning compute.
 <a name="getting_started"></a>
 
@@ -18,7 +18,7 @@ It adds a lightweight objective without changing the base MDM architecture.
 
 ---
 
-## Getting started
+## Getting started 🔥
 
 To get started, create a conda environment and install the FlashAttention:
 
@@ -39,7 +39,7 @@ If you are pre-training or fine-tuning on the Sudoku dataset (48K), ensure the C
 
 You can download the pretrained MDLM checkpoint (OWT) from this [Google Drive folder](https://drive.google.com/drive/folders/16LuuptK7Xfk-vzhQYZBZ0SA-B-BFluau?usp=sharing), provided by the MDLM repository. Place the downloaded files in the `./outputs/checkpoints` directory.
 
-## Training
+## Training 🦾
 ### Pre-training
 We provide pre-training script for Sudoku only:
 ```bash
@@ -60,7 +60,7 @@ For PRISM fine-tuning, we provide the following scripts:
   ./scripts/finetune_owt_prism.sh
   ```
 
-## Evaluation
+## Evaluation 🎯
 We provide evaluation scripts for the fine-tuned module using a static sampler:
 
 - **Sudoku** (Success Rate):
@@ -80,7 +80,7 @@ We provide evaluation scripts for the fine-tuned module using a static sampler:
   1. **sampling.loop_steps**: Number of loop iterations to perform.
   2. **sampling.num_remask_loop**: Number of tokens to remask during each iteration.
 
-## Baselines
+## Baselines 🆚
 
 We provide baseline implementations for comparison:
 
@@ -100,10 +100,10 @@ We provide baseline implementations for comparison:
     ./scripts/sample_owt_remdm.sh
     ```
 
-### Acknowledgements
+### Acknowledgements 🙏
 This repository was built on top of [ReMDM](https://github.com/kuleshov-group/remdm) which was based on [MDLM](https://github.com/kuleshov-group/mdlm) and [SEDD](https://github.com/louaaron/Score-Entropy-Discrete-Diffusion).
 
-## Citation
+## Citation 📝
 ```
 @article{kim2025fine,
   title={Fine-Tuning Masked Diffusion for Provable Self-Correction},
