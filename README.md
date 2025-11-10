@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Fine-Tuning Masked Diffusion for Provable Self-Correction</h1>
 
-  <a href="https://arxiv.org/pdf/2505.18456"><img src="https://img.shields.io/badge/ArXiv-Preprint-red" alt="ArXiv badge"></a>
+  <a href="https://arxiv.org/abs/2510.01384"><img src="https://img.shields.io/badge/ArXiv-Preprint-red" alt="ArXiv badge"></a>
 
   ![graphical_abstract](./assets/sudoku.gif)
 </div>
