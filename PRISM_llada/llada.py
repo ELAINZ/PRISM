@@ -34,7 +34,7 @@ class RemaskingLLaDA(nn.Module):
         self.remasking_head = RemaskingHead(d_model)
 
         # extract the core transformer blocks (backbone model is PEFT model)
-        core = self.backbone.base_model.model.model.transformer
+        # core = self.backbone.base_model.model.model.transformer
     
     def forward(self, input_ids: torch.LongTensor, **kwargs):
         # for eval loop, we drop the kwargs that are not needed

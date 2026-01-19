@@ -11,7 +11,7 @@ from peft import LoraConfig, get_peft_model, TaskType
 from pathlib import Path
 from code_utils import load_opc_dataset
 from self_corrector import RemaskingTrainer, LLaDACollator
-
+from veomni.models.transformers.qwen2.modeling_qwen2 import Qwen2ForCausalLM
 
 INSTRUCTION = """Write ONLY valid Python code for the task below.
 - Output code between <py> and </py> only (no extra text).
@@ -82,13 +82,13 @@ def parse_args():
 
 # Model loading with LoRA integration
 def load_model_and_tokenizer(args):
-    backbone = AutoModel.from_pretrained(
-        "GSAI-ML/LLaDA-8B-Instruct",
+    backbone = Qwen2ForCausalLM.from_pretrained(
+        "Shuibai12138/Open-Dcoder-0.5B-baseline-mdm-step2000",
         trust_remote_code=True,
         torch_dtype=torch.bfloat16,
         return_dict=True,
     )
-    print("Backbone LLaDA loaded!")
+    print("Open-DCoder loaded!")
     
     backbone.config.output_hidden_states = True
     backbone.config.return_dict = True
@@ -100,16 +100,16 @@ def load_model_and_tokenizer(args):
         target_modules=["q_proj", "k_proj", "v_proj"],
         lora_dropout=0.1,
         bias = "none",
-        task_type = TaskType.CAUSAL_LM,
+        task_type = TaskType.FEATURE_EXTRACTION,
     )
     backbone = get_peft_model(backbone, lora_config)
 
     # load tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("GSAI-ML/LLaDA-8B-Instruct", padding_side="right", trust_remote_code=True, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained("Shuibai12138/Open-Dcoder-0.5B-baseline-mdm-step2000", padding_side="right", trust_remote_code=True, use_fast=True)
     print("tokenizer loaded!")
 
-    model = RemaskingLLaDA(backbone, d_model=4096).to(torch.bfloat16)
-
+    # model = RemaskingLLaDA(backbone, d_model=4096).to(torch.bfloat16)
+    model = RemaskingLLaDA(backbone, d_model=backbone.config.hidden_size).to(torch.bfloat16)
     return tokenizer, model
 
 
@@ -180,10 +180,10 @@ def train_model(args, tokenizer, model):
     rank = int(os.environ.get("GLOBAL_RANK", 0))
 
     if args.wandb and rank == 0:
-        wandb.init(project="Remasking-LLaDA", name=args.job_name, entity="jaeyeon_kim-harvard-university")
+        wandb.init(project="Remasking-LLaDA", name=args.job_name)
 
     # Start training
-    trainer.train()
+    trainer.train(resume_from_checkpoint=True)
 
 if __name__ == "__main__":
     init_seed(42)

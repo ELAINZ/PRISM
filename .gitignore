@@ -1,0 +1,13 @@
+__pycache__/
+PRISM_llada/logs/
+PRISM_llada/results/
+PRISM_llada/checkpoints/
+PRISM_llada/__pycache__/
+PRISM_llada/output_dir/
+PRISM_llada/wandb/
+PRISM_llada/data/
+PRISM_llada/veomni/
+PRISM_llada/.DS_Store
+PRISM_llada/.vscode/
+
+

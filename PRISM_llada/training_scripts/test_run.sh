@@ -13,29 +13,40 @@
 #SBATCH --output=/n/netscratch/sham_lab/Everyone/jay_llada/slurm_logs/%j.out
 #SBATCH --error=/n/netscratch/sham_lab/Everyone/jay_llada/slurm_logs/%j.err
 
-source ~/.bashrc
-conda deactivate
-conda activate jay_vlmdm
-module load cuda/12.4.1-fasrc01
+# source ~/.bashrc
+# conda deactivate
+# conda activate jay_vlmdm
+# module load cuda/12.4.1-fasrc01
 
 export NCCL_SOCKET_FAMILY=AF_INET
-export MASTER_ADDR=$(scontrol show hostnames $SLURM_NODELIST | head -n 1)
-export MASTER_PORT=$(shuf -i 15000-59999 -n 1)
-export NODE_RANK=$SLURM_NODEID
+# export MASTER_ADDR=$(scontrol show hostnames $SLURM_NODELIST | head -n 1)
+# export MASTER_PORT=$(shuf -i 15000-59999 -n 1)
+# export NODE_RANK=$SLURM_NODEID
+export MASTER_ADDR=127.0.0.1
+export MASTER_PORT=29500
+export WORLD_SIZE=2
+export CUDA_VISIBLE_DEVICES=2,3
 
 export NCCL_DEBUG=INFO
 export NCCL_DEBUG_SUBSYS=ALL
 export TORCH_DISTRIBUTED_DEBUG=DETAIL
 
-srun --ntasks-per-node=1 --gpus-per-task=4 \
-  python -m torch.distributed.run \
-    --nproc_per_node=4 \
-    --nnodes=$SLURM_JOB_NUM_NODES \
-    --node_rank=$NODE_RANK \
-    --rdzv_backend=c10d \
-    --rdzv_endpoint=$MASTER_ADDR:$MASTER_PORT \
-    --rdzv_id=$SLURM_JOB_ID \
-    train.py \
-    --wandb \
-    --job_name="llada_PRISM"
+# srun --ntasks-per-node=1 --gpus-per-task=4 \
+#   python -m torch.distributed.run \
+#     --nproc_per_node=2 \
+#     --nnodes=$SLURM_JOB_NUM_NODES \
+#     --node_rank=$NODE_RANK \
+#     --rdzv_backend=c10d \
+#     --rdzv_endpoint=$MASTER_ADDR:$MASTER_PORT \
+#     --rdzv_id=$SLURM_JOB_ID \
+#     train.py \
+#     --wandb \
+#     --job_name="llada_PRISM"
+
+torchrun \
+  --nproc_per_node=2 \
+  train.py \
+  --wandb \
+  --job_name="llada_PRISM" \
+  --output_dir="./output_dir/jay_llada"
 
