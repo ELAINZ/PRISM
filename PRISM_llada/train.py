@@ -183,7 +183,7 @@ def train_model(args, tokenizer, model):
         wandb.init(project="Remasking-LLaDA", name=args.job_name)
 
     # Start training
-    trainer.train(resume_from_checkpoint=True)
+    trainer.train()
 
 if __name__ == "__main__":
     init_seed(42)

@@ -10,6 +10,7 @@ from peft import LoraConfig, TaskType, get_peft_model
 from llada import RemaskingLLaDA
 from sampling import llada_inference
 from pathlib import Path
+from veomni.models.transformers.qwen2.modeling_qwen2 import Qwen2ForCausalLM
 
 # ---------------- utils ----------------
 def init_seed(seed: int):
@@ -133,6 +134,10 @@ def merge_shards(out_path: str, world_size: int):
 
 
 def PRISM_model_load(model_path: str, backbone: AutoModel, device: torch.device):
+    if not hasattr(backbone, "prepare_inputs_for_generation"):
+        print("Warning: Adding dummy prepare_inputs_for_generation to backbone.")
+        backbone.prepare_inputs_for_generation = lambda *args, **kwargs: {}
+    
     # follow the same configurations as in the training script
     backbone.config.output_hidden_states = True
     backbone.config.return_dict = True
@@ -145,7 +150,7 @@ def PRISM_model_load(model_path: str, backbone: AutoModel, device: torch.device)
         task_type = TaskType.CAUSAL_LM,
     )
     backbone = get_peft_model(backbone, lora_config)
-    model = RemaskingLLaDA(backbone, d_model=4096)
+    model = RemaskingLLaDA(backbone, d_model=backbone.config.hidden_size)
     
     # load a model from the checkpoint
     ckpt_dir = Path(model_path)
@@ -179,8 +184,8 @@ def main(args):
                         collate_fn=collate, num_workers=0, pin_memory=True)
 
     # load model/tokenizer
-    backbone = AutoModel.from_pretrained("GSAI-ML/LLaDA-8B-Instruct", trust_remote_code=True, torch_dtype=torch.bfloat16).to(device)
-    tokenizer = AutoTokenizer.from_pretrained("GSAI-ML/LLaDA-8B-Instruct", padding_side="right", trust_remote_code=True, use_fast=True)
+    backbone = Qwen2ForCausalLM.from_pretrained("Shuibai12138/Open-Dcoder-0.5B-baseline-mdm-step2000", trust_remote_code=True, torch_dtype=torch.bfloat16).to(device)
+    tokenizer = AutoTokenizer.from_pretrained("Shuibai12138/Open-Dcoder-0.5B-baseline-mdm-step2000", padding_side="right", trust_remote_code=True, use_fast=True)
 
     if args.model_type == "PRISM":
         model = PRISM_model_load(args.model_path, backbone, device)

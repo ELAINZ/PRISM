@@ -12,7 +12,7 @@ SA_WINDOW = 512
 class LLaDACollator(DefaultDataCollator):
     def __init__(self, tokenizer, max_length):
         super().__init__()
-        self.mask_token_id = 126336 # LLaDA mask token id
+        self.mask_token_id = 151665 # LLaDA mask token id
         self.tokenizer = tokenizer
         self.max_length = max_length
     

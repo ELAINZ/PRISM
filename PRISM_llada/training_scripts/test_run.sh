@@ -23,7 +23,7 @@ export NCCL_SOCKET_FAMILY=AF_INET
 # export MASTER_PORT=$(shuf -i 15000-59999 -n 1)
 # export NODE_RANK=$SLURM_NODEID
 export MASTER_ADDR=127.0.0.1
-export MASTER_PORT=29500
+export MASTER_PORT=29501
 export WORLD_SIZE=2
 export CUDA_VISIBLE_DEVICES=2,3
 
@@ -45,6 +45,7 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL
 
 torchrun \
   --nproc_per_node=2 \
+  --master_port=29501 \
   train.py \
   --wandb \
   --job_name="llada_PRISM" \
