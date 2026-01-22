@@ -12,7 +12,7 @@ SA_WINDOW = 512
 class LLaDACollator(DefaultDataCollator):
     def __init__(self, tokenizer, max_length):
         super().__init__()
-        self.mask_token_id = 126336 # LLaDA mask token id
+        self.mask_token_id = 151665  
         self.tokenizer = tokenizer
         self.max_length = max_length
     
@@ -52,8 +52,8 @@ class RemaskingTrainer(Trainer):
         self.K = extra["K"]
         self.max_length = extra["max_length"]
         self.xs_sampling = extra["xs_sampling"]
-        # self.mask_token_id = 151665 # LLaDA mask token id
-        self.mask_token_id = 126336 # Open Dcoder mask token id
+        # self.mask_token_id = 126336 # LLaDA mask token id
+        self.mask_token_id = 151665   # Open Dcoder mask token id
 
     def one_step_sampler(self, logits, xt):
         masked_idx = (xt == self.mask_token_id)
